@@ -6,7 +6,7 @@ import { Quasar } from 'quasar'
 // import Layout from './Layouts/App.vue'
 import { Loading, Dialog, Notify } from 'quasar'
 
-// import store from './Stores/index';
+import store from './Stores/index';
 
 // Import icon libraries
 import '@quasar/extras/fontawesome-v6/fontawesome-v6.css'
@@ -25,7 +25,7 @@ createInertiaApp({
   setup({ el, App, props, plugin }) {
     createApp({ render: () => h(App, props) })
       .use(plugin)
-      //.use(store)
+      .use(store)
       .use(Quasar, {
         plugins: {Loading, Notify, Dialog}
       })
