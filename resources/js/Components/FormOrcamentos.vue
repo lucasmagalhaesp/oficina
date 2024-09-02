@@ -1,5 +1,8 @@
 <template>
     <q-form class="row q-col-gutter-md">
+        <div class="col-12 col-md-3">
+            <q-input :dense="!$q.screen.lt.sm" v-model="dados.data_hora_criacao" color="dark" filled outlined label="Data/Hora Criação:" type="datetime-local" clearable />
+        </div>
         <div class="col-12 col-md-6">
             <q-input :dense="!$q.screen.lt.sm" v-model="dados.cliente" color="dark" filled outlined label="Cliente:" clearable />
         </div>
@@ -12,9 +15,6 @@
         <div class="col-12 col-md-2">
             <q-input :dense="!$q.screen.lt.sm" v-model="dados.valor" color="dark" filled outlined label="Valor:" mask="#,##" reverse-fill-mask prefix="R$" clearable />
         </div>
-        <div class="col-12 col-md-3">
-            <q-input :dense="!$q.screen.lt.sm" v-model="dados.data_hora_criacao" color="dark" filled outlined label="Data/Hora Criação:" type="datetime-local" clearable />
-        </div>
     </q-form>
     <div class="row q-mt-md q-gutter-sm justify-center">
         <q-btn :class="$q.screen.lt.sm ? 'full-width btn-lg' : ''" label="Salvar" icon="fas fa-save" color="positive" push @click="salvar" />
@@ -23,42 +23,36 @@
 </template>
 
 <script>
+import { date } from "quasar"
 import { router } from "@inertiajs/vue3"
 export default {
-    data(){
-        return {
-            dados:{
-                id: "",
-                cliente: "",
-                vendedor: "",
-                valor: "",
-                descricao: "",
-                data_hora_criacao: ""
-            }
-        }
-    },
     async created(){
-        if (![null, undefined, 0].includes(this.dados.codigo)) {
+        const timeStamp = Date.now();
+        this.dados.data_hora_criacao = date.formatDate(timeStamp, "YYYY-MM-DD HH:mm");
+
+        if (![null, undefined, 0, ""].includes(this.dados.id)) {
             this.$q.loading.show({ message: "Buscando dados..." });
-            this.$store.dispatch("entidades/getEntidade", { empresa: this.empresa })
-            .then(() => this.$q.loading.hide())
+            axios(`/orcamentos/${this.dados.id}/edit`)
+            .then(resposta => {
+                this.$store.commit("setDadosOrcamento", resposta.data);
+                this.$q.loading.hide();
+            })
             .catch(() => this.$q.loading.hide());
         }
     },
     computed:{
-        /* dados(){
-            return this.$store.state.entidades.dadosCadastro
-        } */
+        dados(){
+            return this.$store.state.dadosCadastro
+        }
     },
     methods:{
         salvar(){
             this.$q.loading.show({ message: "Salvando orçamento..." });
             axios.post(`/orcamentos`, { dados: this.dados })
             .then(resposta => {
-                let dadosResposta = resposta.data;
                 this.$q.dialog({
                     title: "Confirmação",
-                    message: "Orçamento cadastrado com sucesso",
+                    message: `Orçamento ${[null, undefined, , ""].includes(this.dados.id) ? 'cadastrado' : 'atualizado'} com sucesso`,
                     html: true,
                     class: "bg-positive text-white",
                     persistent: true,
@@ -101,9 +95,7 @@ export default {
             router.visit("/orcamentos/listagem")
         },
         limparCampos(){
-            for(let campo in this.dados){
-                this.dados[campo] = "";
-            }
+            this.$store.commit("limparCadastro");
         }
     }
 }

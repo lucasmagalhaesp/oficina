@@ -1,0 +1,10 @@
+/* Inverter botões OK e Cancelar no modal gerado pelo $q.dialog */
+.q-dialog-plugin .q-card__actions{
+    justify-content: flex-start;
+    flex-direction: row-reverse;
+}
+
+.q-dialog-plugin .q-card__actions .q-btn{
+    margin-left: 10px
+}
+/*fim*/

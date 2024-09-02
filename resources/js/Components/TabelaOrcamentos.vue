@@ -9,14 +9,11 @@
                 table-header-class="bg-blue-grey-2"
                 :rows="orcamentos"
                 :columns="colunas"
-                :rows-per-page-options="[$q.screen.lt.sm ? 5 : 20]"
+                :rows-per-page-options="[$q.screen.lt.sm ? 5 : 10]"
                 :hide-header="$q.screen.lt.sm"
                 separator="cell"
                 wrap-cells
-                dense
                 :loading="carregando"
-                v-model:pagination="paginacao"
-                @request="getDados"
                 no-data-label="Nenhum registro encontrado"
             >
                 <template v-slot:loading>
@@ -32,11 +29,12 @@
                             </q-btn-group>
                         </q-td>
                         <q-td key="id" :props="props">{{ props.row.id }}</q-td>
+                        <q-td key="data_hora_criacao" :props="props">{{ formataDataHora.formatDate(props.row.data_hora_criacao, "DD/MM/YYYY HH:mm") }}</q-td>
                         <q-td key="cliente" :props="props">{{ props.row.cliente }}</q-td>
                         <q-td key="vendedor" :props="props">{{ props.row.vendedor }}</q-td>
-                        <q-td key="descricao" :props="props">{{ props.row.descricao }}</q-td>
+                        <q-td key="descricao" :props="props">{{ props.row.descricao.substring(0,50) }}...</q-td>
                         <q-td key="valor" :props="props">{{ formataValor(props.row.valor) }}</q-td>
-                        <q-td key="data_hora_criacao" :props="props">{{ formataData(props.row.data_hora_criacao) }}</q-td>
+                        <!-- <q-td key="data_hora_criacao" :props="props">{{ formataData(props.row.data_hora_criacao) }}</q-td> -->
                     </q-tr>
                 </template>
 
@@ -145,29 +143,24 @@
 
 <script>
 import { usePage, router } from "@inertiajs/vue3"
-import { formataDataTimeBR, formataMoedaReal } from "../Composables/formatacoes.js"
 import { date } from "quasar"
+import { formataDataTimeBR, formataMoedaReal } from "../Composables/formatacoes.js"
 export default {
     props: ["atualizarDados"],
     data(){
         return {
             formataData: null,
             formataValor: null,
-            dateQ: null,
-            paginacao: {
-                page: 1,
-                rowsPerPage: this.$q.screen.lt.sm ? 5 : 20,
-                rowsNumber: 0
-            },
             carregando: false,
-            orcamentos: []
+            orcamentos: [],
+            formataDataHora: null,
         }
     },
     async created(){
         this.formataData = formataDataTimeBR;
         this.formataValor = formataMoedaReal;
-        this.dateQ = date.formatDate;
-        this.getDados({ pagination: this.paginacao });
+        this.formataDataHora = date;
+        this.getDados();
     },
     computed:{
         filtros(){
@@ -177,16 +170,16 @@ export default {
             return [
                 { name: "edtExc", label: "" },
                 { name: "id", align: "center", label: "Código", field: "id" },
+                { name: "data_hora_criacao", align: "center", label: "Data/Hora da criação", field: "data_hora_criacao" },
                 { name: "cliente", align: "center", label: "Cliente", field: "cliente" },
                 { name: "vendedor", align: "center", label: "Vendedor", field: "vendedor" },
                 { name: "descricao", align: "center", label: "Descrição", field: "descricao" },
                 { name: "valor", align: "center", label: "Valor", field: "valor" },
-                { name: "data_hora_criacao", align: "center", label: "Data/Hora da criação", field: "data_hora_criacao" },
             ]
         },
     },
     methods:{
-        getDados(dadosPg){
+        getDados(){
             this.carregando = true;
             axios.post(`/orcamentos/getDadosFiltrados`, { filtros: this.filtros })
             .then(resposta => {
@@ -207,20 +200,9 @@ export default {
             })
             .then(() => this.carregando = false);
         },
-        /* getTotalEntidades(dadosPg){
-            const { page, rowsPerPage } = dadosPg.pagination;
-            this.$store.dispatch("entidades/getTotalEntidades", { empresa: this.empresa })
-            .then(totalEntidades => {
-                this.paginacao.rowsNumber = totalEntidades;
-                this.paginacao.page = page;
-                this.paginacao.rowsPerPage = rowsPerPage;
-            })
-            .catch()
-            .then();
-        }, */
         editar(id){
-            this.$store.commit("entidades/editarCadastro", id);
-            router.get("entidades/cadastrar");
+            this.$store.commit("editarOrcamento", id);
+            router.get(`/orcamentos/editar/${id}`);
         },
         async excluir(id){
             this.$q.dialog({
@@ -242,10 +224,38 @@ export default {
                 }
             })
             .onOk(() => {
-                this.$q.loading.show({ message: "Excluindo orçamento" });
-                this.$store.dispatch("entidades/excluir", { empresa: this.empresa, codigo: id })
-                .then(() => this.$q.loading.hide())
-                .then(() => this.getDados({ pagination: this.paginacao }));
+                this.$q.loading.show({ message: "Excluindo orçamento..." });
+                axios.delete(`/orcamentos/${id}`)
+                .then(resposta => {
+                    this.$q.dialog({
+                        title: "Confirmação",
+                        message: "Orçamento excluído com sucesso",
+                        html: true,
+                        class: "bg-positive text-white",
+                        ok: {
+                            push: true,
+                            color: "white",
+                            textColor: "positive"
+                        },
+                    });
+                })
+                .catch(error => {
+                    this.$q.dialog({
+                        title: "Erro",
+                        message: "Erro excluir orçamento",
+                        html: true,
+                        class: "bg-negative text-white",
+                        ok: {
+                            push: true,
+                            color: "white",
+                            textColor: "negative"
+                        },
+                    });
+                })
+                .then(() => {
+                    this.$q.loading.hide();
+                    this.getDados();
+                });
             });
         },
         showFiltros(){
@@ -254,7 +264,7 @@ export default {
     },
     watch:{
         atualizarDados(){
-            this.getDados({ pagination: this.paginacao })
+            this.getDados()
         }
     }
 }

@@ -8,17 +8,17 @@
             </q-card-section>
             <q-card-section class="q-my-sm q-mx-sm">
                 <div class="row q-mb-md q-mt-xs q-col-gutter-md">
-                    <div class="col-12 col-md-4">
-                        <q-input :dense="!$q.screen.lt.sm" v-model="filtros.dataCriacao.dataInicial" color="dark" filled outlined label="Data Inicial:" type="date" clearable />
-                    </div>
-                    <div class="col-12 col-md-4">
-                        <q-input :dense="!$q.screen.lt.sm" v-model="filtros.dataCriacao.dataFinal" color="dark" filled outlined label="Data Final:" type="date" clearable />
+                    <div class="col-12 col-md-6">
+                        <q-input :dense="!$q.screen.lt.sm" v-model="filtros.dataCriacao.dataInicial" color="dark" filled outlined label="Data de Criação (Inicial):" type="date" clearable />
                     </div>
                     <div class="col-12 col-md-6">
-                        <q-input :dense="!$q.screen.lt.sm" v-model="filtros.cliente" color="dark" filled outlined label="Cliente:" clearable />
+                        <q-input :dense="!$q.screen.lt.sm" v-model="filtros.dataCriacao.dataFinal" color="dark" filled outlined label="Data de Criação (Final):" type="date" clearable />
                     </div>
                     <div class="col-12 col-md-6">
-                        <q-input :dense="!$q.screen.lt.sm" v-model="filtros.vendedor" color="dark" filled outlined label="Vendedor:" clearable />
+                        <q-input :dense="!$q.screen.lt.sm" v-model="filtros.cliente" color="dark" filled outlined label="Cliente:" clearable hint="Você pode digitar parte do nome para pesquisar" />
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <q-input :dense="!$q.screen.lt.sm" v-model="filtros.vendedor" color="dark" filled outlined label="Vendedor:" clearable placeholder="" hint="Você pode digitar parte do nome para pesquisar" />
                     </div>
                 </div>
             </q-card-section>
@@ -58,5 +58,8 @@ export default {
 <style scoped>
     .q-card >>> .q-card__section--vert{
         padding: 0 5px
+    }
+    .q-btn-item >>> .q-icon{
+        font-size: inherit
     }
 </style>

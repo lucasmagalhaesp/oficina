@@ -4,18 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Orcamento extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     public $timestamps = false;
+    const DELETED_AT = "data_hora_exclusao";
 
-    public function getOrcamentos($filtros)
+    public function getDados($filtros)
     {
         try {
-            $orcamentos = $this->orderBy("id", "desc")
-                            ->where(function ($query) use ($filtros){
+            $orcamentos = $this->where(function ($query) use ($filtros){
                                 if (!is_null($filtros)){
                                     if (isset($filtros["dataCriacao"]) && !is_null($filtros["dataCriacao"]) && $filtros["dataCriacao"] != "" && 
                                         isset($filtros["dataCriacao"]["dataInicial"]) && !is_null($filtros["dataCriacao"]["dataInicial"]) && $filtros["dataCriacao"]["dataInicial"] != "" && 
@@ -33,6 +34,7 @@ class Orcamento extends Model
                                         $query->where("vendedor", "like", "%".$filtros["vendedor"]."%");
                                 }
                             })
+                            ->orderBy("data_hora_criacao", "desc")
                             ->get();
         } catch (\Exception $e) {
             return false;
@@ -41,7 +43,12 @@ class Orcamento extends Model
         return $orcamentos;
     }
 
-    public function gravarOrcamento($dados)
+    public function getOrcamento($id)
+    {
+        return $this->find($id);
+    }
+
+    public function gravar($dados)
     {
         $dados["valor"] = str_replace(",", ".", $dados["valor"]);
         if (is_null($dados["id"])){
@@ -52,5 +59,10 @@ class Orcamento extends Model
         }else{
             $this->where("id", $dados["id"])->update($dados);
         }
+    }
+
+    public function excluir($id)
+    {
+        return $this->find($id)->delete();
     }
 }

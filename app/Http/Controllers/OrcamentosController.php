@@ -12,45 +12,40 @@ class OrcamentosController extends Controller
     public function index(Request $request, Orcamento $orcamento)
     {
         $filtros = $request->filtros ?? null;
-        $dados = $orcamento->getOrcamentos($filtros);
+        $dados = $orcamento->getDados($filtros);
         if (!$dados) response()->json("Erro ao buscar os dados dos orçamentos", 500);
         
         return response()->json($dados, 200);
-    }
-
-    public function create()
-    {
-        
     }
 
     public function store(OrcamentosRequest $request, Orcamento $orcamento)
     {
         $dados = $request->dados;
         if (is_null($dados)) return response()->json("Dados não enviados", 500);
-        $retorno = $orcamento->gravarOrcamento($dados);
+        $retorno = $orcamento->gravar($dados);
         
         if (!$retorno) response()->json("Erro ao gravar orçamento", 500);
     
         return response()->json(true, 200);
     }
 
-    public function show(string $id)
+    public function edit($id)
     {
-        //
+        if (is_null($id)) return response()->json("Código do orçamento não informado", 500);
+
+        $dados = (new Orcamento)->getOrcamento($id);
+        if (!$dados) return response()->json("Erro ao editar orçamento", 500);
+
+        return response()->json($dados, 200);
     }
 
-    public function edit(string $id)
+    public function destroy($id)
     {
-        //
-    }
+        if (is_null($id)) return response()->json("Código do orçamento não informado", 500);
 
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+        $retornoExc = (new Orcamento)->excluir($id);
+        if (!$retornoExc) return response()->json("Erro ao excluir orçamento", 500);
 
-    public function destroy(string $id)
-    {
-        //
+        return response()->json(true, 200);
     }
 }
