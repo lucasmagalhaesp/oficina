@@ -10,10 +10,18 @@ class Orcamento extends Model
 {
     use HasFactory, SoftDeletes;
 
+    /** Informa ao Model que a tabela orçamento não possui os campos "created_at" e "updated_at" */
     public $timestamps = false;
+
+    /** Informa ao Model o nome do campo que será utilizado pelo SoftDeletes, ao invés de "deleted_at" */
     const DELETED_AT = "data_hora_exclusao";
 
-    public function getDados($filtros)
+    /**Função para pesquisar os orçamentos
+     * @author Lucas Magalhães
+     * @param array $filtros - Array com os filtros fornecidos para a consulta
+     * @return object|bool - Orçamentos filtrados
+     */
+    public function getDados(array $filtros) : object|bool
     {
         try {
             $orcamentos = $this->where(function ($query) use ($filtros){
@@ -42,27 +50,58 @@ class Orcamento extends Model
 
         return $orcamentos;
     }
-
-    public function getOrcamento($id)
+    
+    /**Função para buscar os dados de um orçamento
+     * @author Lucas Magalhães
+     * @param int $id - Código do orçamento
+     * @return object|bool - Dados do orçamento 
+     */
+    public function getOrcamento(int $id) : object|bool
     {
-        return $this->find($id);
-    }
-
-    public function gravar($dados)
-    {
-        $dados["valor"] = str_replace(",", ".", $dados["valor"]);
-        if (is_null($dados["id"])){
-            foreach($dados as $campo => $valor){
-                $this->$campo = $valor;
-            }
-            $this->save();
-        }else{
-            $this->where("id", $dados["id"])->update($dados);
+        try {
+            $dados = $this->find($id);
+        } catch (\Exception $e) {
+            return false;
         }
+
+        return $dados;
     }
 
-    public function excluir($id)
+    /**Função para gravar o orçamento
+     * @author Lucas Magalhães
+     * @param array $dados - Dados do orçamento que serão gravador
+     * @return bool - Confirmação da gravação
+     */
+    public function gravar(int $dados) : bool
     {
-        return $this->find($id)->delete();
+        try{
+            $dados["valor"] = str_replace(",", ".", $dados["valor"]);
+            if (is_null($dados["id"])){
+                foreach($dados as $campo => $valor){
+                    $this->$campo = $valor;
+                }
+                $this->save();
+            }else{
+                $this->where("id", $dados["id"])->update($dados);
+            }
+        }catch(\Exception $e){
+            return false;
+        }
+
+        return true;
+    }
+
+    /**Função para excluir um orçamento (na realidade ele não exclui, apenas o "esconde", através de SoftDeletes)
+     * @author Lucas Magalhães
+     * @param int $id - Código do orçamento
+     * @return bool - Confirmação da exclusão
+     */
+    public function excluir(int $id) : bool
+    {
+        try{
+            return $this->find($id)->delete();
+        }catch(\Exception $e){
+            return false;
+        }
     }
 }

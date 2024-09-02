@@ -6,19 +6,12 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class OrcamentosRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
+    /** Regras de validação para o cadastro de orçamentos*/
     public function rules(): array
     {
         return [
@@ -30,20 +23,21 @@ class OrcamentosRequest extends FormRequest
         ];
     }
 
-    public function messages()
+    /** Mensagens de erro para o usuário */
+    public function messages(): array
     {
         return [
-            "dados.cliente.required" => "Cliente não informado",
-            "dados.cliente.min"     => "Nome do cliente deve ter pelo menos 2 caracteres",
-            "dados.vendedor.required" => "Vendedor não informado",
-            "dados.vendedor.min" => "Nome do vendedor deve ter pelo menos 2 caractres",
-            "dados.descricao.required" => "Descrição do orçamento não informada",
-            "dados.descricao.min" => "A descrição do orçamento deve ter pelo menos 5 caracteres",
-            "dados.descricao.max" => "A descrição do orçamento deve ter no máximo 1000 caracteres",
-            "dados.valor.required" => "Valor não informado",
-            "dados.valor.regex" => "Valor inválido",
-            "dados.data_hora_criacao.required" => "Data/hora de criação do orçamento não informados",
-            "dados.data_hora_criacao.date" => "Data/hora do orçamento é inválida",
+            "dados.cliente.required"            => "Cliente não informado",
+            "dados.cliente.min"                 => "Nome do cliente deve ter pelo menos 2 caracteres",
+            "dados.vendedor.required"           => "Vendedor não informado",
+            "dados.vendedor.min"                => "Nome do vendedor deve ter pelo menos 2 caracteres",
+            "dados.descricao.required"          => "Descrição do orçamento não informada",
+            "dados.descricao.min"               => "A descrição do orçamento deve ter pelo menos 5 caracteres",
+            "dados.descricao.max"               => "A descrição do orçamento deve ter no máximo 1000 caracteres",
+            "dados.valor.required"              => "Valor não informado",
+            "dados.valor.regex"                 => "Valor inválido",
+            "dados.data_hora_criacao.required"  => "Data/hora de criação do orçamento não informados",
+            "dados.data_hora_criacao.date"      => "Data/hora do orçamento é inválida",
         ];
     }
 }

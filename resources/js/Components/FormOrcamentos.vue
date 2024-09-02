@@ -1,19 +1,19 @@
 <template>
     <q-form class="row q-col-gutter-md">
-        <div class="col-12 col-md-3">
-            <q-input :dense="!$q.screen.lt.sm" v-model="dados.data_hora_criacao" color="dark" filled outlined label="Data/Hora Criação:" type="datetime-local" clearable />
+        <div class="col-12 col-md-4">
+            <q-input :dense="!$q.screen.lt.sm" v-model="dados.data_hora_criacao" color="green-7" filled outlined label="Data/Hora Criação:" type="datetime-local" clearable />
         </div>
-        <div class="col-12 col-md-6">
-            <q-input :dense="!$q.screen.lt.sm" v-model="dados.cliente" color="dark" filled outlined label="Cliente:" clearable />
+        <div class="col-12 col-md-8">
+            <q-input ref="cliente" :dense="!$q.screen.lt.sm" v-model="dados.cliente" color="green-7" filled outlined label="Cliente:" clearable />
         </div>
-        <div class="col-12 col-md-5">
-            <q-input :dense="!$q.screen.lt.sm" v-model="dados.vendedor" color="dark" filled outlined label="Vendedor:" clearable />
+        <div class="col-12 col-md-8">
+            <q-input :dense="!$q.screen.lt.sm" v-model="dados.vendedor" color="green-7" filled outlined label="Vendedor:" clearable />
         </div>
-        <div class="col-12 col-md-5">
-            <q-input :dense="!$q.screen.lt.sm" v-model="dados.descricao" color="dark" filled outlined label="Descrição:" type="textarea" clearable />
+        <div class="col-12 col-md-4">
+            <q-input :dense="!$q.screen.lt.sm" v-model="dados.valor" color="green-7" filled outlined label="Valor:" mask="#,##" reverse-fill-mask prefix="R$" clearable />
         </div>
-        <div class="col-12 col-md-2">
-            <q-input :dense="!$q.screen.lt.sm" v-model="dados.valor" color="dark" filled outlined label="Valor:" mask="#,##" reverse-fill-mask prefix="R$" clearable />
+        <div class="col-12 col-md-12">
+            <q-input :dense="!$q.screen.lt.sm" v-model="dados.descricao" color="green-7" filled outlined label="Descrição:" type="textarea" clearable />
         </div>
     </q-form>
     <div class="row q-mt-md q-gutter-sm justify-center">
@@ -39,6 +39,9 @@ export default {
             })
             .catch(() => this.$q.loading.hide());
         }
+    },
+    mounted(){
+        this.$refs.cliente.focus();
     },
     computed:{
         dados(){

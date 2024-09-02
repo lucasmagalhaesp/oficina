@@ -8,3 +8,21 @@
     margin-left: 10px
 }
 /*fim*/
+
+.bg-cor-padrao1{
+    background-color: #222 !important;
+    color: #FFF !important
+}
+
+.cor-padrao2{
+    color: #185D30 !important
+}
+
+.bg-cor-padrao2{
+    background-color: #185D30 !important;
+    color: #FFF !important
+}
+
+.menu .q-icon{
+    color: #52B240 !important;
+}

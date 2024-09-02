@@ -6,7 +6,7 @@
                 :style="[!$q.screen.lt.sm ? 'max-height:450px' : 'background-color: #f5f5f5', orcamentos.length == 0 && !$q.screen.lt.sm ? 'height: 350px' : '' ]"
                 class="table-documentos q-mb-lg"
                 :card-class="$q.screen.lt.sm ? '' : 'bg-blue-grey-1'"
-                table-header-class="bg-blue-grey-2"
+                table-header-class="bg-cor-padrao2"
                 :rows="orcamentos"
                 :columns="colunas"
                 :rows-per-page-options="[$q.screen.lt.sm ? 5 : 10]"
@@ -38,104 +38,68 @@
                     </q-tr>
                 </template>
 
-                <!-- <template v-slot:body="props" v-else>
+                <template v-slot:body="props" v-else>
                     <q-card class="col-12 bg-blue-grey-1" :class="$q.screen.lt.sm ? '' : 'q-mt-md'">
                         <q-card-section class="bg-blue-grey-2 text-dark">
-                            <div class="text-h6 text-bold">Código: {{ props.row.codigo }}</div>
+                            <div class="text-h6 text-bold">Código: {{ props.row.id }}</div>
                         </q-card-section>
                         <q-card-section class="q-mb-md dados-mobile">
                             <div class="row">
                                 <div class="col-6">
-                                    <strong>Nome:</strong> 
+                                    <strong>Data/Hora da Criação:</strong> 
                                 </div>
                                 <div class="col-6">
-                                    {{ props.row.nome }}
-                                </div>
-                            </div>
-                            <q-separator />
-                            <div class="row">
-                                <div class="col-6">
-                                    <strong>Tipo de Entidade:</strong> 
-                                </div>
-                                <div class="col-6">
-                                    {{ getDescEntidade(props.row.entidade_tipo) }}
+                                    {{ formataDataHora.formatDate(props.row.data_hora_criacao, "DD/MM/YYYY HH:mm") }}
                                 </div>
                             </div>
                             <q-separator />
                             <div class="row">
                                 <div class="col-6">
-                                    <strong>Físico/Jurídico:</strong> 
+                                    <strong>Cliente:</strong> 
                                 </div>
                                 <div class="col-6">
-                                    {{ props.row.fisicojuridico == "J" ? "Jurídico" : "Físico" }}
-                                </div>
-                            </div>
-                            <q-separator />
-                            <div class="row">
-                                <div class="col-6">
-                                    <strong>Nome Fantasia:</strong> 
-                                </div>
-                                <div class="col-6">
-                                    {{ props.row.nomefantasia }}
+                                    {{ props.row.cliente }}
                                 </div>
                             </div>
                             <q-separator />
                             <div class="row">
                                 <div class="col-6">
-                                    <strong>Data de Nasc.:</strong> 
+                                    <strong>Vendedor:</strong> 
                                 </div>
                                 <div class="col-6">
-                                    {{ formataData(props.row.dt_nasc) }}
-                                </div>
-                            </div>
-                            <q-separator />
-                            <div class="row">
-                                <div class="col-6">
-                                    <strong>CPF/CNPJ:</strong> 
-                                </div>
-                                <div class="col-6">
-                                    {{ formataDocs(props.row.cgc_cpf) }}
+                                    {{ props.row.vendedor }}
                                 </div>
                             </div>
                             <q-separator />
                             <div class="row">
                                 <div class="col-6">
-                                    <strong>RG:</strong> 
+                                    <strong>Descrição:</strong> 
                                 </div>
                                 <div class="col-6">
-                                    {{ props.row.insc_rg }}
-                                </div>
-                            </div>
-                            <q-separator />
-                            <div class="row">
-                                <div class="col-6">
-                                    <strong>Endereço:</strong> 
-                                </div>
-                                <div class="col-6">
-                                    {{ formatarEndereco(props.row) }}
+                                    {{ props.row.descricao.substring(0,50) }}...
                                 </div>
                             </div>
                             <q-separator />
                             <div class="row">
                                 <div class="col-6">
-                                    <strong>Telefone:</strong> 
+                                    <strong>Valor:</strong> 
                                 </div>
                                 <div class="col-6">
-                                    {{ [undefined, null, ""].includes(props.row.tel1) ? "" :formataTel(props.row.tel1) }}
+                                    {{ formataValor(props.row.valor) }}
                                 </div>
                             </div>
                             <q-separator />
                             <div class="row q-mt-md q-col-gutter-sm">
                                 <div class="col-12">
-                                    <q-btn color="primary" class="full-width" icon="fas fa-edit" label="Editar" @click="editar(props.row.codigo)" push></q-btn>
+                                    <q-btn color="primary" class="full-width" icon="fas fa-edit" label="Editar" @click="editar(props.row.id)" push></q-btn>
                                 </div>
                                 <div class="col-12">
-                                    <q-btn color="negative" class="full-width" icon="fas fa-trash" label="Excluir" @click="excluir(props.row.codigo)" push></q-btn>
+                                    <q-btn color="negative" class="full-width" icon="fas fa-trash" label="Excluir" @click="excluir(props.row.id)" push></q-btn>
                                 </div>
                             </div>
                         </q-card-section>
                     </q-card>
-                </template> -->
+                </template>
             </q-table>
         </div>
     </div>
@@ -277,6 +241,10 @@ export default {
 
     .q-card__section--vert{
         padding: 5px 16px;
+    }
+
+    .q-btn-item >>> .q-icon{
+        font-size: inherit
     }
 
 </style>

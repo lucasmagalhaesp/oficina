@@ -3,9 +3,7 @@
 use App\Http\Controllers\OrcamentosController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', fn() => redirect("/orcamentos/listagem"));
 
 Route::get("/orcamentos/criar", fn() => Inertia("CriarOrcamentos"))->name("criarOrcamentos");
 Route::get("/orcamentos/editar/{id}", fn() => Inertia("CriarOrcamentos"))->name("criarOrcamentos");
