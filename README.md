@@ -22,6 +22,11 @@ DB_USERNAME=
 DB_PASSWORD=
 ```
 
+## Execute suas migrations
+```bash
+php artisan migrate
+```
+
 ## Iniciar a aplicação
 ```bash
 php artisan serve
