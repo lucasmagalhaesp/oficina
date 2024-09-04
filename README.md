@@ -1,6 +1,6 @@
 # Oficina 2.0
 
-## O que é o Oficina 2.0
+## O que é o Oficina 2.0?
 É um sistema simples para gerenciamento de orçamentos.
 
 ## Tecnologias Utilizadas
