@@ -60,6 +60,7 @@ class Orcamento extends Model
     {
         try {
             $dados = $this->find($id);
+            $dados->valor = number_format( (float) $dados->valor, 2, '.', '');
         } catch (\Exception $e) {
             return false;
         }
@@ -72,7 +73,7 @@ class Orcamento extends Model
      * @param array $dados - Dados do orçamento que serão gravador
      * @return bool - Confirmação da gravação
      */
-    public function gravar(int $dados) : bool
+    public function gravar(array $dados) : bool
     {
         try{
             $dados["valor"] = str_replace(",", ".", $dados["valor"]);
